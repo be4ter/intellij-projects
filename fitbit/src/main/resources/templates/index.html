@@ -5,10 +5,19 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>Hello</h1>
-
-    <form action="/generate/code">
-        <button type="submit">코드요청</button>
+<h1>Hello</h1>
+<form action="/generate/code">
+    <button type="submit">코드요청</button>
+</form>
+<br>
+<div>
+    <span>Code:</span> <input value={{code}}>
+    <form method="POST" action="/generate/token/{{code}}">
+        <button type="submit">토큰요청</button>
     </form>
+</div>
+<br>
+
+
 </body>
 </html>
