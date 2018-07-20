@@ -6,9 +6,11 @@
 </head>
 <body>
 <h1>Hello</h1>
+{{^code}}
 <form action="/generate/code">
     <button type="submit">코드요청</button>
 </form>
+{{/code}}
 <br>
 <div>
     <span>Code:</span> <input value={{code}}>
@@ -20,11 +22,28 @@
 
 <br>
 <div>
+    <form method="get" action="/get/sleep-data">
+        <button type="submit">잠 정보 가져오기</button>
+    </form>
+</div>
+<br>
+
+<br>
+<div>
     <form method="POST" action="/revoke/token">
         <button type="submit">토큰취소하기</button>
     </form>
 </div>
 <br>
+{{#datas}}
+<br>
+<div>
+    <form method="POST" action="/revoke/token">
+        <button type="submit">토큰취소하기</button>
+    </form>
+</div>
+<br>
+{{/datas}}
 
 
 </body>
