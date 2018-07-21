@@ -1,5 +1,6 @@
 package com.example.demo.domain;
 
+import com.example.demo.Utils.GlobalExecute;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -31,19 +32,17 @@ public class RefreshToken {
     }
 
     public static RefreshToken generate(String refreshToken) throws URISyntaxException, IOException, ParseException {
-        URI uri = new URIBuilder().setScheme("https").setHost("api.fitbit.com").setPath("/oauth2/token")
+        HttpPost httpPost = new HttpPost(createURI(refreshToken));
+        CloseableHttpResponse response = GlobalExecute.postMethodRefresh(httpPost);
+        HttpEntity entity = response.getEntity();
+        JSONParser jsonParser = new JSONParser();
+        return new RefreshToken((JSONObject) jsonParser.parse(EntityUtils.toString(entity, "UTF-8")));
+    }
+
+    private static URI createURI(String refreshToken) throws URISyntaxException {
+        return new URIBuilder().setScheme("https").setHost("api.fitbit.com").setPath("/oauth2/token")
                 .setParameter("grant_type", "refresh_token")
                 .setParameter("refresh_token", refreshToken).build();
-        HttpPost httpPost = new HttpPost(uri);
-        httpPost.addHeader("Authorization", "Basic MjJDWlc5OjgxOWQxY2EwODE3ODMwNzNkMGZkNjRkNzI1YjAyMzgw");
-        httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse response = httpclient.execute(httpPost);
-        HttpEntity entity = response.getEntity();
-        String responseString = EntityUtils.toString(entity, "UTF-8");
-        JSONParser jsonParser = new JSONParser();
-        Object object = jsonParser.parse(responseString);
-        return new RefreshToken((JSONObject) object);
     }
 
     public String getUserId() {

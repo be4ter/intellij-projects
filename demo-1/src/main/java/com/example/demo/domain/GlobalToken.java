@@ -6,19 +6,19 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class GlobalToken {
-    public static AuthToken authToken;
+    public static AuthToken token;
 
     public static boolean isNull() {
-        return authToken == null;
+        return token == null;
     }
 
-    public static AuthToken getAuthToken() {
-        return authToken;
+    public static AuthToken getToken() {
+        return token;
     }
 
     public static RefreshToken getRefreshToken() {
         try {
-            return RefreshToken.generate(authToken.getRefreshToken());
+            return RefreshToken.generate(token.getRefreshToken());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -27,5 +27,9 @@ public class GlobalToken {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void revoke() {
+        token = null;
     }
 }
