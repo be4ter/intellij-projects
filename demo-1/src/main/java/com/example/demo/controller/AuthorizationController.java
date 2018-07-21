@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.utils.TokenUtils;
+import com.example.demo.domain.AuthToken;
+import com.example.demo.domain.GlobalToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -41,6 +42,25 @@ public class AuthorizationController {
     }
 
     private void sendPost(String code) throws IOException, URISyntaxException, ParseException {
+        if (GlobalToken.isNull()) {
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            CloseableHttpResponse response = httpclient.execute(getHttpPost(code));
+            log.info("repose statusLine : " + response.getStatusLine());
+            HttpEntity entity = response.getEntity();
+            JSONObject json = getJsonObject(EntityUtils.toString(entity, "UTF-8"));
+            GlobalToken.authToken = AuthToken.create(json);
+        } else {
+            log.info("이미 토큰이 발급 되었습니다.");
+        }
+    }
+
+    private JSONObject getJsonObject(String responseString) throws ParseException {
+        JSONParser jsonParser = new JSONParser();
+        Object object = jsonParser.parse(responseString);
+        return (JSONObject) object;
+    }
+
+    private HttpPost getHttpPost(String code) throws URISyntaxException {
         URI uri = new URIBuilder().setScheme("https").setHost("api.fitbit.com").setPath("/oauth2/token")
                 .setParameter("clientId", "22CZW9").setParameter("grant_type", "authorization_code")
                 .setParameter("redirect_uri", "http://localhost:8080/callback")
@@ -48,26 +68,6 @@ public class AuthorizationController {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("Authorization", "Basic MjJDWlc5OjgxOWQxY2EwODE3ODMwNzNkMGZkNjRkNzI1YjAyMzgw");
         httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse response = httpclient.execute(httpPost);
-        log.info("repose statusLine : " + response.getStatusLine());
-        HttpEntity entity = response.getEntity();
-        String responseString = EntityUtils.toString(entity, "UTF-8");
-        JSONParser jsonParser = new JSONParser();
-        Object object = jsonParser.parse(responseString);
-        JSONObject json = (JSONObject) object;
-        String accessToken = (String) json.get("access_token");
-        String scope = (String) json.get("scope");
-        String refreshToken = (String) json.get("refresh_token");
-        String tokenType = (String) json.get("token_type");
-        String userId = (String) json.get("user_id");
-        log.info("access_token : " + accessToken);
-        log.info("scope : " + scope);
-        log.info("refresh_token : " + refreshToken);
-        log.info("token_type : " + tokenType);
-        log.info("user_id : " + userId);
-        log.info("responseString : " + responseString);
-        TokenUtils.token = accessToken;
+        return httpPost;
     }
 }

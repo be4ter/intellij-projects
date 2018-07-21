@@ -21,7 +21,6 @@ public class IndexController {
     @GetMapping("/callback")
     public String printCode(String code) {
         this.code = code;
-        log.info("code :" + code);
         return "redirect:/";
     }
 }

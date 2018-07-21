@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.utils.TokenUtils;
+import com.example.demo.domain.GlobalToken;
+import com.example.demo.domain.RefreshToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -27,24 +28,35 @@ public class DataController {
     @GetMapping("/sleep-data")
     public String slepp(Model model) {
         try {
-            sendGet();
+            model.addAttribute("sleep", sendGet());
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
         log.info("slepp data");
-        return "redirect:/";
+        return "/data";
     }
 
-    private void sendGet() throws URISyntaxException, IOException {
+    private String sendGet() throws URISyntaxException, IOException {
+        String responseString = "";
         URI uri = new URIBuilder().setScheme("https").setHost("api.fitbit.com").setPath("1.2/user/-/sleep/date/2018-07-20.json").build();
         HttpGet httpGet = new HttpGet(uri);
-        httpGet.addHeader("Authorization", "Bearer " + TokenUtils.token);
+        httpGet.addHeader("Authorization", "Bearer " + GlobalToken.getAuthToken().getAccessToken());
         CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse response = httpclient.execute(httpGet);
         log.info("repose statusLine : " + response.getStatusLine());
         HttpEntity entity = response.getEntity();
-        String responseString = EntityUtils.toString(entity, "UTF-8");
+        responseString = EntityUtils.toString(entity, "UTF-8");
         log.info("responseString : " + responseString);
-
+        if (response.getStatusLine().getStatusCode() != 200) {
+            RefreshToken refreshToken = GlobalToken.getRefreshToken();
+            HttpGet newHttpGet = new HttpGet(uri);
+            newHttpGet.addHeader("Authorization", "Bearer " + refreshToken.getAccessToken());
+            httpclient = HttpClients.createDefault();
+            response = httpclient.execute(httpGet);
+            log.info("repose statusLine : " + response.getStatusLine());
+            entity = response.getEntity();
+            responseString = EntityUtils.toString(entity, "UTF-8");
+        }
+        return responseString;
     }
 }
