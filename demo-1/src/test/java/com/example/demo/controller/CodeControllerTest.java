@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 public class CodeControllerTest {
     public static final Logger log = LoggerFactory.getLogger(CodeControllerTest.class);
     CodeController codeController;
-    FitbitCode code;
     HttpResponse response;
     MyRedirectHandler handler;
 
@@ -31,7 +30,7 @@ public class CodeControllerTest {
     @Test
     public void createCodeGenerateUrl() throws IOException {
         response = codeController.createCodeGenerateURI("22CZW9", "http://localhost:8080/callback", "sleep", "604800");
-        assertEquals(301, response.getStatusLine().getStatusCode());
+        assertEquals(200, response.getStatusLine().getStatusCode());
 
     }
 }

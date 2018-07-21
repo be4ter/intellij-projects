@@ -28,7 +28,6 @@ public class CodeController {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        log.info("uri : " + uri);
         return createHttpGet(uri);
     }
 
