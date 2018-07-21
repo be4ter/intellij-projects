@@ -1,12 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.utils.CodeUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +19,7 @@ public class CodeController {
         URI uri = null;
         try {
             uri = new URIBuilder().setScheme("https").setHost("api.fitbit.com").setPath("/oauth2/authorize")
-                    .setParameter("response_type", CodeUtils.RESPONSE_TYPE)
+                    .setParameter("response_type", "code")
                     .setParameter("client_id", clientId).setParameter("redirect_uri", callbackAddress)
                     .setParameter("scope", scope).setParameter("expires_in", expiresTime).build();
         } catch (URISyntaxException e) {
