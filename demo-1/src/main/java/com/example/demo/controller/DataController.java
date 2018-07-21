@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.Utils.GlobalExecute;
 import com.example.demo.domain.GlobalToken;
 import com.example.demo.domain.RefreshToken;
 import org.apache.http.HttpEntity;
@@ -28,35 +29,21 @@ public class DataController {
     @GetMapping("/sleep-data")
     public String slepp(Model model) {
         try {
-            model.addAttribute("sleep", sendGet());
-        } catch (URISyntaxException | IOException e) {
+            model.addAttribute("sleep", sendGet(GlobalToken.getToken().getAccessToken()));
+        } catch (URISyntaxException | IOException | NullPointerException e) {
             e.printStackTrace();
+            return "redirect:/";
         }
         log.info("slepp data");
         return "/data";
     }
 
-    private String sendGet() throws URISyntaxException, IOException {
-        String responseString = "";
-        URI uri = new URIBuilder().setScheme("https").setHost("api.fitbit.com").setPath("1.2/user/-/sleep/date/2018-07-20.json").build();
-        HttpGet httpGet = new HttpGet(uri);
-        httpGet.addHeader("Authorization", "Bearer " + GlobalToken.getAuthToken().getAccessToken());
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse response = httpclient.execute(httpGet);
-        log.info("repose statusLine : " + response.getStatusLine());
-        HttpEntity entity = response.getEntity();
-        responseString = EntityUtils.toString(entity, "UTF-8");
-        log.info("responseString : " + responseString);
-        if (response.getStatusLine().getStatusCode() != 200) {
-            RefreshToken refreshToken = GlobalToken.getRefreshToken();
-            HttpGet newHttpGet = new HttpGet(uri);
-            newHttpGet.addHeader("Authorization", "Bearer " + refreshToken.getAccessToken());
-            httpclient = HttpClients.createDefault();
-            response = httpclient.execute(httpGet);
-            log.info("repose statusLine : " + response.getStatusLine());
-            entity = response.getEntity();
-            responseString = EntityUtils.toString(entity, "UTF-8");
-        }
-        return responseString;
+    private String sendGet(String accessToken) throws URISyntaxException, IOException {
+        CloseableHttpResponse response = GlobalExecute.getMethod(new HttpGet(createDataURI()), accessToken);
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
+    }
+
+    private URI createDataURI() throws URISyntaxException {
+        return new URIBuilder().setScheme("https").setHost("api.fitbit.com").setPath("1.2/user/-/sleep/date/2018-07-20.json").build();
     }
 }
