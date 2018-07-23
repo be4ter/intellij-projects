@@ -62,6 +62,7 @@ bin/
 .settings/
 .recommenders/
 
-
+#project
+/demo-1/
 
 
