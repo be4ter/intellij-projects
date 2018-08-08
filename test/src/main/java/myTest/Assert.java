@@ -4,15 +4,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Assert {
-    public static final Logger log = LoggerFactory.getLogger(Assert.class);
+    private static final Logger logger = LoggerFactory.getLogger(Assert.class);
 
     private Assert() {
-    }
+    } // 인스턴스 생성을 막기 위해 기본생성자 private 선언
 
-    public static void assertTrue(boolean condition) throws AssertionFailedError {
+    public static void assertTrue(boolean condition) {
         if (!condition) {
             throw new AssertionFailedError();
         }
-        log.debug("Test 통과");
+
+        logger.info("Test Passed");
+    }
+
+    public static void assertEquals(Object o1, Object o2) {
+        if (!o1.equals(o2)) {
+            throw new AssertionFailedError();
+        }
     }
 }

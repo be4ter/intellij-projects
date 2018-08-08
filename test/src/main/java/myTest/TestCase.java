@@ -7,32 +7,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class TestCase implements Test {
-    public static final Logger log = LoggerFactory.getLogger(TestCase.class);
 
-    public String testCaseName;
+    private static final Logger logger = LoggerFactory.getLogger(TestCase.class);
+
+    protected String testCaseName;
 
     public TestCase(String testCaseName) {
         this.testCaseName = testCaseName;
     }
 
-    public void after() {
-    }
-
-    public void before() {
-    }
-
-    private void runTestCase() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        log.debug("{} excute", testCaseName);
-        Method method = this.getClass().getMethod(testCaseName, null);
-        method.invoke(this, null);
-    }
-
     public TestResult run() {
         TestResult testResult = createTestResult();
         run(testResult);
+
         return testResult;
     }
 
+    @Override
     public void run(TestResult testResult) {
         testResult.startTest();
         before();
@@ -40,7 +31,7 @@ public abstract class TestCase implements Test {
             runTestCase();
         } catch (InvocationTargetException ite) {
             if (isAssertionFailed(ite)) {
-                testResult.addFailed(this);
+                testResult.addFailure(this);
             } else {
                 testResult.addError(this, ite);
             }
@@ -57,6 +48,18 @@ public abstract class TestCase implements Test {
 
     private TestResult createTestResult() {
         return new TestResult();
+    }
+
+    protected void before() {
+    }
+
+    private void runTestCase() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        logger.info("{} execute ", testCaseName); // 테스트 케이스들 구별을 위해 name 출력 코드
+        Method method = this.getClass().getMethod(testCaseName, null);
+        method.invoke(this, null);
+    }
+
+    protected void after() {
     }
 
     public String getTestCaseName() {

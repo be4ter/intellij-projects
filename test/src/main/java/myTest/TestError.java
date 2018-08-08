@@ -1,16 +1,16 @@
 package myTest;
 
 public class TestError {
-    private TestCase testCast;
+    private TestCase testCase;
     private Exception exception;
 
-    public TestError(TestCase testCase, Exception e) {
-        this.testCast = testCase;
-        this.exception = e;
+    public TestError(TestCase testCase, Exception exception) {
+        this.testCase = testCase;
+        this.exception = exception;
     }
 
-    public String getTestCastName() {
-        return testCast.getTestCaseName();
+    public String getTestCaseName() {
+        return testCase.getTestCaseName();
     }
 
     public Exception getException() {
