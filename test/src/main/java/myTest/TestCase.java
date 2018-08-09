@@ -15,16 +15,6 @@ public abstract class TestCase implements Test {
         this.testCaseName = testCaseName;
     }
 
-    public TestResult run() {
-        TestResult testResult = createTestResult();
-        run(testResult);
-        return testResult;
-    }
-
-    private TestResult createTestResult() {
-        return new TestResult();
-    }
-
     public void run(TestResult testResult) {
         testResult.startTest();
         before();
