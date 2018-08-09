@@ -7,41 +7,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestResult {
-    private static final Logger logger = LoggerFactory.getLogger(TestResult.class);
-    private int runTestCount;
+    public static final Logger log = LoggerFactory.getLogger(TestResult.class);
+    private int testCount;
     private List<TestFailure> failures;
-    private List<TestError> errors;
+    private List<TestErrors> errors;
 
     public TestResult() {
-        this.runTestCount = 0;
+        this.testCount = 0;
         this.failures = new ArrayList<>();
         this.errors = new ArrayList<>();
     }
 
-    /**
-     * synchronized: 하나의 TestResult 인스턴스를 여러 테스트 케이스에서 사용하게 될 경우
-     * 쓰레드 동기화 문제가 발생하므로 여기선 synchronized로 간단하게 해결합니다.
-     * (테스트 케이스에서만 사용하므로 실시간 성능 이슈를 고려하지 않아도 되기 때문입니다)
-     */
     public synchronized void startTest() {
-        this.runTestCount++;
+        testCount += 1;
     }
 
-    public synchronized void addFailure(TestCase testCase) {
+    public void printCount() {
+        log.info("Total Test Count: {}", testCount);
+        log.info("Total Test Success Count: {}", testCount - failures.size() - errors.size());
+        log.info("Total Test Failure Count: {}", failures.size());
+        log.info("Total Test Error Count: {}", errors.size());
+    }
+
+
+    public void addFailure(TestCase testCase) {
         this.failures.add(new TestFailure(testCase));
     }
 
-    public synchronized void addError(TestCase testCase, Exception e) {
-        this.errors.add(new TestError(testCase, e));
-    }
+    public void addError(TestCase testCase, Exception e) {
+        this.errors.add(new TestErrors(testCase, e));
 
-    /**
-     * 차후 본인이 원하는 방식으로 레포팅 방식 변경
-     */
-    public void printCount() {
-        logger.info("Total Test Count: {}", runTestCount);
-        logger.info("Total Test Success Count: {}", runTestCount - failures.size() - errors.size());
-        logger.info("Total Test Failure Count: {}", failures.size());
-        logger.info("Total Test Error Count: {}", errors.size());
     }
 }

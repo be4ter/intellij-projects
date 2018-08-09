@@ -1,10 +1,10 @@
 package myTest;
 
-public class TestError {
+public class TestErrors {
     private TestCase testCase;
     private Exception exception;
 
-    public TestError(TestCase testCase, Exception exception) {
+    public TestErrors(TestCase testCase, Exception exception) {
         this.testCase = testCase;
         this.exception = exception;
     }

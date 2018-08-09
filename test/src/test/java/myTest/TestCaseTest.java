@@ -1,13 +1,11 @@
-import myTest.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package myTest;
 
 public class TestCaseTest extends TestCase {
+    private int base;
+
     public TestCaseTest(String testCaseName) {
         super(testCaseName);
     }
-
-    private static long base;
 
     @Override
     public void before() {
@@ -15,20 +13,20 @@ public class TestCaseTest extends TestCase {
     }
 
     public void runTest() {
-        long sum = 10 + base;
-        Assert.assertTrue(sum == 30);
+        int sum = 10 + base;
+        Assert.assertTrue(sum == 20);
     }
 
-    public void runTestMinus() {
-        long minus = 100 - base;
-        Assert.assertTrue(minus == 90);
+    public void minus() {
+        int sum = 10 - base;
+        Assert.assertFaild(sum == 10);
     }
+
 
     public static void main(String[] args) {
         TestSuite testSuite = new TestSuite();
         testSuite.addTestCase(new TestCaseTest("runTest"));
-        testSuite.addTestCase(new TestCaseTest("runTestMinus"));
-
+        testSuite.addTestCase(new TestCaseTest("minus"));
         TestResult testResult = new TestResult();
         testSuite.run(testResult);
         testResult.printCount();

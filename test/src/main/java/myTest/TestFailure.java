@@ -8,6 +8,6 @@ public class TestFailure {
     }
 
     public String getTestCaseName() {
-        return testCase.getTestCaseName();
+        return this.testCase.getTestCaseName();
     }
 }

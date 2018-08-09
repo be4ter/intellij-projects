@@ -7,8 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class TestCase implements Test {
-
-    private static final Logger logger = LoggerFactory.getLogger(TestCase.class);
+    public static final Logger log = LoggerFactory.getLogger(TestCase.class);
 
     protected String testCaseName;
 
@@ -19,47 +18,53 @@ public abstract class TestCase implements Test {
     public TestResult run() {
         TestResult testResult = createTestResult();
         run(testResult);
-
         return testResult;
-    }
-
-    @Override
-    public void run(TestResult testResult) {
-        testResult.startTest();
-        before();
-        try {
-            runTestCase();
-        } catch (InvocationTargetException ite) {
-            if (isAssertionFailed(ite)) {
-                testResult.addFailure(this);
-            } else {
-                testResult.addError(this, ite);
-            }
-        } catch (Exception e) {
-            testResult.addError(this, e);
-        } finally {
-            after();
-        }
-    }
-
-    private boolean isAssertionFailed(InvocationTargetException ite) {
-        return ite.getTargetException() instanceof AssertionFailedError;
     }
 
     private TestResult createTestResult() {
         return new TestResult();
     }
 
+    public void run(TestResult testResult) {
+        testResult.startTest();
+        before();
+        try {
+            testRun();
+        } catch (InvocationTargetException e) {
+            if (isAssertionFailed(e)) {
+                testResult.addFailure(this);
+            } else {
+                testResult.addError(this, e);
+            }
+        } catch (Exception e) {
+            testResult.addError(this, e);
+        } finally {
+            tearDown();
+        }
+    }
+
+    private boolean isAssertionFailed(InvocationTargetException e) {
+        return e.getTargetException() instanceof AssertionFailedError;
+    }
+
+    protected void tearDown() {
+    }
+
+    ;
+
     protected void before() {
     }
 
-    private void runTestCase() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        logger.info("{} execute ", testCaseName); // 테스트 케이스들 구별을 위해 name 출력 코드
-        Method method = this.getClass().getMethod(testCaseName, null);
-        method.invoke(this, null);
-    }
+    ;
 
-    protected void after() {
+    public void testRun() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        try {
+            log.info("{} execute ", testCaseName); // 테스트 케이스들 구별을 위해 name 출력 코드
+            Method method = this.getClass().getMethod(this.testCaseName, null);
+            method.invoke(this, null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getTestCaseName() {
