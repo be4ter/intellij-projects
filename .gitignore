@@ -28,3 +28,11 @@
 ### projects ###
 demo-1/
 board/
+my-test/
+test/
+.gitignore
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml
+src/main/
