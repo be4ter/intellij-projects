@@ -1,0 +1,66 @@
+<!DOCTYPE html >
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pasing Test</title>
+</head>
+<body>
+<div>
+    <table border="1">
+        <tr>
+            <th>contents</th>
+        </tr>
+        <tr th:each="i : ${articleList}">
+            <td th:text="${i.contents}"></td>
+        </tr>
+    </table>
+</div>
+
+
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6 text-center">
+        <ul class="pagination center-block" style="display: inline-block;">
+            <li>
+                <form action="/article" method="get">
+                    <input type="hidden" value="0" name="page">
+                    <input type="hidden" value="10" name="size">
+                    <input type="submit" value="<<">
+                </form>
+            </li>
+            <!--start-->
+            <li>
+                <form action="/article" method="get">
+                    <input type="hidden" value="0" name="page">
+                    <input type="hidden" value="10" name="size">
+                    <input type="submit" value="1">
+                </form>
+            </li>
+            <li>
+                <form action="/article" method="get">
+                    <input type="hidden" value="1" name="page">
+                    <input type="hidden" value="10" name="size">
+                    <input type="submit" value="2">
+                </form>
+            </li>
+            <li>
+
+                <form action="/article" method="get">
+                    <input type="hidden" value="2" name="page">
+                    <input type="hidden" value="10" name="size">
+                    <input type="submit" value="3">
+                </form>
+            </li>
+            <!--end-->
+            <li>
+                <form action="/article" method="get">
+                    <input type="hidden"  name="page">
+                    <input type="hidden" value="10" name="size">
+                    <input type="submit" value=">>">
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
